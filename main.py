@@ -10,7 +10,7 @@ Arguments:
    - file name
    - keys
 """
-from resume_builder.builder import *
+from resume_builder.cv import *
 from resume_builder.templates import *
 import os
 import argparse
@@ -33,7 +33,6 @@ my_parser.add_argument('--debug', '-d', action='store_true', help='Print debug l
 
 # Parsed args
 args = vars(my_parser.parse_args())
-template = template_basic()
 tags = args['tags']
 input = args['input']
 output = args['output']
@@ -67,7 +66,7 @@ if not output.endswith('.pdf'):
 
 # Parse input file/directory into resume
 if input.endswith('.yaml'):
-   resume = builder_from_yaml(input)
+   cv = cv_from_yaml(input)
 elif os.path.isdir(input):
    basic_info = 'basic_info.csv'
    experience = 'experience.csv'
@@ -78,16 +77,17 @@ elif os.path.isdir(input):
    if remaining:
       logger.error('Missing csv data files in directory %s: %s', input, remaining)
       sys.exit(1)
-   resume = builder_from_csv(f'{input}/{experience}', f'{input}/{skills}', f'{input}/{basic_info}')
+   cv = cv_from_csv(f'{input}/{experience}', f'{input}/{skills}', f'{input}/{basic_info}')
 else:
    logger.error('Input not a directory or .yaml file: %s', input)
    sys.exit(1)
 
 # Build resume
-resume.build_resume(template, tags, output,
+template = template_basic(
    max_experience=max_experience, 
    max_skills=max_skills, 
    display_project_skills=display_project_skills, 
    header_font_size=header_font_size, 
    body_font_size=body_font_size, 
    title_font_size=title_font_size)
+template.apply(cv, tags)

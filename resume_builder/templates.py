@@ -5,6 +5,9 @@ Next Priority : Let's making something that will make our PDF
             - Header, Skills, Work Experience, Relevant Projects, Education 
 """
 from fpdf import FPDF
+import logging
+
+logger = logging.getLogger('template')
 
 class template_basic(FPDF):
     """
@@ -38,24 +41,97 @@ class template_basic(FPDF):
             skill_n : string
         }
     """
-    linespace = 6
+    def __init__(self,
+        max_experience=7,
+        max_skills=7,
+        display_project_skills=False,
+        header_font_size=12,
+        body_font_size=10.5,
+        title_font_size=20,
+        font='Helvetica',
+        linespace=6):
+        """
+        Initialize
+        """
+        self.max_experience = max_experience
+        self.max_skills = max_skills
+        self.display_project_skills = display_project_skills
+        self.linespace = linespace
+        self.header_font_size = header_font_size
+        self.body_font_size = body_font_size
+        self.title_font_size = title_font_size
+        self.font = font
+        super().__init__()
 
-    def head(self, name, address):
+    def build_experience(self, cv, tags):
+        """
+        Build truncated list of work experience and project experience
+        """
+        logger.info('Build experience')
+        filtered_jobs = cv.jobs[cv.jobs.tags.apply(lambda x: any(k in x for k in tags))]
+        logger.debug('After filtered tags: \n%s', filtered_jobs)
+ 
+        # Holders for work and project experience
+        experience = { 'work': {}, 'projects': {} }
+
+        # Get work experiences up to max_list
+        work_items = filtered_jobs[filtered_jobs.type == 'J'].head(self.max_experience)
+        work_items['date'] = self._format_experience_date_ranges(work_items)
+        work_items = work_items[['company', 'title', 'location', 'date', 'detail']]
+        logger.debug('Work experience items: \n%s', work_items)
+        experience['work'] = work_items.set_index('company').to_dict('index')
+
+        # Add project experience if no. work items < max_list
+        if len(work_items) < self.max_experience:
+            project_items = filtered_jobs[filtered_jobs.type == 'P']
+            project_items = project_items.head(self.max_experience - len(work_items))
+            project_items['date'] = self._format_experience_date_ranges(project_items)
+            project_items = project_items[['title', 'date', 'skills', 'detail']]
+            if not self.display_project_skills:
+                # Drop skills column if we're not displaying it
+                project_items = project_items.drop(columns=['skills'])
+            logger.debug('Project experience items: \n%s', project_items)
+            experience['projects'] = project_items.set_index('title').to_dict('index')
+
+        # Return experience
+        logger.info('Experience Dict: %s', experience)
+        return experience
+        
+    def build_skills(self, cv):
+        """
+        Build truncated lists of skills
+        """
+        logger.info('Build skills')
+        trunc_skills = { group:skills[:self.max_skills] for group, skills in cv.skills.items() }
+        logger.info('Truncated skills: %s', trunc_skills)
+        return trunc_skills
+
+    def _format_experience_date_ranges(self, item):
+        """
+        Work experience and project experience date range formatting
+        (e.g. June 2020 - Present, April 2018 - August 2018)
+        """
+        date_format = '%B %Y'
+        start_str = item.start.dt.strftime(date_format)
+        end_str = item.end.dt.strftime(date_format).fillna('Present')
+        return f'{start_str} - {end_str}'
+
+    def head(self, cv):
         """
         Build header
         """
         self.set_font(self.font, 'B', self.title_font_size)
-        w = self.get_string_width(name) + 6
+        w = self.get_string_width(cv.name) + 6
         self.set_x((210 - w) / 2)
         self.set_text_color(66, 81, 245)
-        self.cell(w, 7, txt=name, align='C', new_y='NEXT')
+        self.cell(w, 7, txt=cv.name, align='C', new_y='NEXT')
         self.set_text_color(39, 39, 46)
         self.ln(0.5)
         self.set_font(self.font, size=self.body_font_size)
-        if type(address) is list:
+        if type(cv.subheader_info) is list:
             bullet = ' **\u00b7** '
-            address = bullet.join(address)
-        self.cell(0, 5, txt=address, align='C', new_y="NEXT", new_x="LMARGIN", markdown=True)
+            cv.subheader_info = bullet.join(cv.subheader_info)
+        self.cell(0, 5, txt=cv.subheader_info, align='C', new_y="NEXT", new_x="LMARGIN", markdown=True)
         
     def section_header(self, header):
         """
@@ -72,23 +148,25 @@ class template_basic(FPDF):
         self.ln(1)
         self.set_text_color(39, 39, 46)
 
-    def skills(self, skills):
+    def skills(self, cv):
         """
         Skills sections
         """
         self.section_header('**Skills**')
-        for skill in skills:
+        for skill in cv.skills:
             self.set_font(self.font, 'B', self.body_font_size)
             self.cell(0, self.linespace, skill + ': ', align='L', new_x="END")
             self.set_font(self.font, '', self.body_font_size)
-            skill_string = ', '.join(skills.get(skill))
+            skill_string = ', '.join(cv.skills.get(skill))
             self.multi_cell(0, self.linespace, skill_string, new_x="LMARGIN", new_y="NEXT", align='L')
         self.ln(1)
         
-    def work_exp(self, w_exp):
+    def work_exp(self, cv, tags):
         """
         Work experience sections
         """
+        w_exp = self.build_experience(cv, tags)['work']
+        if not w_exp: return
         self.section_header('**Professional Experience**')
         for company in w_exp:
             info = w_exp.get(company)
@@ -106,10 +184,12 @@ class template_basic(FPDF):
             self.ln(.5)
         self.ln(1)
 
-    def proj_exp(self, p_exp):
+    def proj_exp(self, cv, tags):
         """
         Project experience sections
         """
+        p_exp = self.build_experience(cv, tags)['projects']
+        if not p_exp: return
         self.section_header('**Relevant Projects**')
         for project in p_exp:
             info = p_exp.get(project)
@@ -131,16 +211,16 @@ class template_basic(FPDF):
             self.ln(.5)
         self.ln(1)
 
-    def education(self, education):
+    def education(self, cv):
         """
         Education sections
         """
         self.section_header('**Education**')
-        for degree in education:
+        for degree in cv.education:
             self.set_font(self.font, 'B', self.body_font_size)
             self.cell(0, self.linespace, degree, new_x="END", new_y="NEXT", align='L')
             self.set_font(self.font, '', self.body_font_size)
-            degree_info = education.get(degree)
+            degree_info = cv.education.get(degree)
             address = degree_info.get('address')
             date = degree_info.get('completed')
             gpa = degree_info.get('GPA')
@@ -148,18 +228,13 @@ class template_basic(FPDF):
             self.cell(0, self.linespace, address , new_x="LMARGIN", new_y="NEXT", align='L')
         self.ln(1)
     
-    def fill_resume(self, name, address, skills, w_exp, edu, p_exp=None, header_font_size=12, body_font_size=10.5, title_font_size=20, font='Helvetica'):
+    def apply(self, cv, tags):
         """
         Build resume
         """
-        self.header_font_size = header_font_size
-        self.body_font_size = body_font_size
-        self.title_font_size = title_font_size
-        self.font = font
         self.add_page()
-        self.head(name, address)
-        self.education(edu)
-        self.skills(skills)
-        if p_exp: 
-            self.proj_exp(p_exp)
-        self.work_exp(w_exp)
+        self.head(cv)
+        self.education(cv)
+        self.skills(cv)
+        self.proj_exp(cv, tags)
+        self.work_exp(cv, tags)
