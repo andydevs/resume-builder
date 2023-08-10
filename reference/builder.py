@@ -6,7 +6,7 @@ import yaml
 # Get logger
 logger = logging.getLogger('builder')
 
-class builder: 
+class Builder: 
     """
     My plan is to make this class inheritable for difference types of inputs. 
     """
@@ -138,7 +138,7 @@ def builder_from_yaml(fname):
     jobs['end'] = pd.to_datetime(jobs['end'])
     jobs['type'] = jobs['type'].str.upper()
     jobs = jobs.sort_values('start', ascending=False)
-    return builder(name, address, education, skills, jobs)
+    return Builder(name, address, education, skills, jobs)
 
 
 def builder_from_csv(fjobs, fskills, basic_info):
@@ -170,4 +170,4 @@ def builder_from_csv(fjobs, fskills, basic_info):
     for i in skills:
         skills[i] = skills[i][0]
     name = basic.name.item()
-    return builder(name, address, education, skills, jobs)
+    return Builder(name, address, education, skills, jobs)

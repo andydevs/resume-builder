@@ -1,0 +1,103 @@
+---
+name: Billy Jean
+
+contact:
+  phone: (555)-555-5555
+  email: BillyJean@Fake.com
+  website: BillyJeansPersonalSite.com
+
+education:
+  - degree: BS in Electrical Engineering
+    school: 
+      title: Community College
+      address:
+        street: Community Lane
+        city: Conneticut 
+        state: Florida
+    completed: 
+      month: June 
+      year: 2020
+    GPA: '3.00'
+
+skills:
+  - group: Programming Languages
+    skills:
+      - Python
+      - Javascript
+      - MATLAB
+      - Powershell
+      - C++
+  - group: Technical Skills
+    skills:
+      - Machine Learning 
+      - NLP
+      - Pattern Recognition
+      - Digital Forensics
+      - Web Development
+
+projects:
+  - title: Billy Jeans Personal Project
+    tags: 
+      - machine learning
+      - software development
+      - data science
+      - python
+      - pytorch
+      - nlp
+      - programming
+      - technology
+    skills: 
+      - Pytorch
+      - Deep Learning
+      - AWS
+    details:
+      - Can use any amount of details
+      - Billy Jean Project detail 1
+      - Billy Jean Project detail 2
+
+experience:
+  - title: IT Engineer
+    tags: 
+      - IT 
+      - security 
+      - programming 
+      - technology
+    company: Jean Company
+    location: New York NY
+    start: 
+      month: 4
+      day: 1
+      year: 2019
+    end: 
+      month: 12
+      day: 1
+      year: 2019
+    skills:
+      - IT
+      - AWS
+    detail:
+      - Specify Job Details Here
+      - Job Detail 2
+      - Job Detail 3
+
+  - title: IT Engineer
+    tags: 
+      - IT 
+      - security 
+      - programming 
+      - technology
+    company: Jean Company
+    location: New York NY
+    start: 
+      month: 4
+      day: 1
+      year: 2019
+    end: 
+      present: true
+    skills:
+      - IT
+      - AWS
+    detail:
+      - Specify Job Details Here
+      - Job Detail 2
+      - Job Detail 3

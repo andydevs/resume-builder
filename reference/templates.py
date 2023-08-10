@@ -8,7 +8,7 @@ Next Priority : Let's making something that will make our PDF
 from fpdf import FPDF
 
 linespace = 5.2
-class template_basic(FPDF):
+class TemplateBasic(FPDF):
     '''
         Default Colors: 
             Headers (Blue) : 66, 81, 245 
@@ -186,6 +186,3 @@ class template_basic(FPDF):
         if p_exp: 
             self.proj_exp(p_exp)
         self.work_exp(w_exp)
-        
-if __name__=="__main__":
-    pass
