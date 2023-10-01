@@ -12,6 +12,7 @@ Arguments:
 """
 import argparse
 from . import Template
+import os.path
 
 
 # Argument parser
@@ -27,6 +28,6 @@ parser.add_argument('--debug',          '-d', action='store_true', help='Print d
 
 if __name__ == '__main__':
    args = parser.parse_args()
-   output = args.output or args.input.replace('.yaml', '.pdf')
+   output = args.output or os.path.basename(args.input).replace('.yaml', '.pdf')
    resume = Template()
    resume.output(output)
