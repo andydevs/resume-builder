@@ -11,8 +11,9 @@ Arguments:
    - keys
 """
 import argparse
-from . import Template
+from . import FPDFResumeTemplate
 import os.path
+import yaml
 
 
 # Argument parser
@@ -27,7 +28,16 @@ parser.add_argument('--debug',          '-d', action='store_true', help='Print d
 
 
 if __name__ == '__main__':
+   # Arguments
    args = parser.parse_args()
-   output = args.output or os.path.basename(args.input).replace('.yaml', '.pdf')
-   resume = Template()
-   resume.output(output)
+   input_path = args.input
+   output = args.output or os.path.basename(input_path).replace('.yaml', '.pdf')
+
+   # Load data
+   with open(input_path, 'r') as f:
+      resume = yaml.safe_load(f)
+
+   # Build resume
+   template = FPDFResumeTemplate()
+   pdf = template.compile(resume)
+   pdf.output(output)
