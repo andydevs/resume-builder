@@ -1,0 +1,75 @@
+---
+name: Anshul Kharbanda
+
+contact:
+  phone: (508) 314-2399
+  email: akanshul97@gmail.com
+  website: andydevs.github.io
+
+education:
+  - degree: BS in Computer Engineering
+    school:
+      title: Drexel University
+      address:
+        street: 3141 Chestnut St.
+        city: Philadelphia
+        state: Pensylvania
+    completed:
+      month: June
+      year: 2020
+    GPA: '3.00'
+
+skills:
+  - group: Programming Languages
+    skills:
+      - Python
+      - Javascript
+      - C++
+      - HTML/CSS
+
+experience:
+  - title: Software Engineer
+    tags:
+      - Software
+      - Testing
+      - Automation
+      - JavaScript
+      - Python
+    company: Hewlett Packard Enterprise
+    location: Andover MA
+    start:
+      month: 6
+      year: 2022
+    end:
+      present: true
+    skills:
+      - Javascript
+      - Python
+      - Cypress
+      - TestRail
+    detail:
+      - Developed system for automated browser end-to-end testing of a hybrid-cloud application
+      - Worked with JavaScript and Cypress
+      - Designed architecture of testing system and planned development
+      - Handled QA testing of hybrid-cloud application
+
+  - title: Software Engineer
+    tags:
+      - Software
+      - Security Clearence
+      - Radar
+    company: Raytheon Missiles and Defense
+    start:
+      month: 11
+      year: 2020
+    end:
+      month: 6
+      year: 2022
+    skills:
+      - MATLAB
+      - C++
+    detail:
+      - Developed build pipelines for containerized applications which are orchestrated on a Kubernetes cluster
+      - Worked in a Scrum Team, coordinated with Jira and Confluence
+      - Worked with Jenkins, Kubernetes, OpenShift, Artifactory
+      - Developed and demoed a plugin for SIMDIS for potential use within projects

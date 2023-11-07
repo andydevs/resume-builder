@@ -14,6 +14,12 @@ class FPDFResumeTemplate:
         'October', 'November', 'December'
     ]
 
+    def __init__(self, display_projects=False):
+        """
+        Initialize resume template
+        """
+        self.display_projects = display_projects
+
     def title(self, resume):
         """
         Build the PDF title
@@ -45,16 +51,17 @@ class FPDFResumeTemplate:
         self._heading('Skills')
         self.pdf.set_font(family=self.font, size=11)
         with self.pdf.table(first_row_as_headings=False,
-                            col_widths=(40,100),
-                            line_height=6, 
+                            line_height=5, 
                             gutter_height=2, 
                             borders_layout='NONE') as table:
+            titles = table.row()
             for group in resume['skills']:
-                row = table.row()
                 self.pdf.set_font(style='B')
-                row.cell(group['group'], v_align='T')
-                self.pdf.set_font()
-                row.cell('\n'.join(f'{self.bullet} {skill}' for skill in group['skills']), v_align='T')
+                titles.cell(group['group'], v_align='T')
+            self.pdf.set_font()
+            skills = table.row()
+            for group in resume['skills']:
+                skills.cell('\n'.join(f'{self.bullet} {skill}' for skill in group['skills']), v_align='T')
 
     def projects(self, resume):
         """
@@ -122,6 +129,7 @@ class FPDFResumeTemplate:
         self.title(resume)
         self.education(resume)
         self.skills(resume)
-        self.projects(resume)
+        if self.display_projects and 'projects' in resume:
+            self.projects(resume)
         self.experience(resume)
         return self.pdf
