@@ -52,7 +52,8 @@ class FPDFResumeTemplate:
         self.pdf.set_font(family=self.font, size=11)
         with self.pdf.table(first_row_as_headings=False,
                             line_height=5, 
-                            gutter_height=2, 
+                            gutter_height=2,
+                            text_align='LEFT',
                             borders_layout='NONE') as table:
             titles = table.row()
             for group in resume['skills']:

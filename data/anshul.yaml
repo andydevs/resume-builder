@@ -1,11 +1,9 @@
 ---
 name: Anshul Kharbanda
-
 contact:
   phone: (508) 314-2399
   email: akanshul97@gmail.com
   website: andydevs.github.io
-
 education:
   - degree: BS in Computer Engineering
     school:
@@ -18,23 +16,20 @@ education:
       month: June
       year: 2020
     GPA: '3.00'
-
 skills:
-  - group: Programming Languages
-    skills:
-      - Python
-      - Javascript
-      - C++
-      - HTML/CSS
-
+  - group: Programming
+    skills: [ Python, JavaScript, C++, HTML/CSS ]
+  - group: Web Design
+    skills: [ Node.js, Express, jQuery, React, SCSS ]
+  - group: Cloud Tech
+    skills: [ Linode, Docker, Heroku ]
+  - group: IT
+    skills: [ CompTIA A+ Certification (Ren. 2021) ]
+  - group: Hardware/Systems
+    skills: [ Arduino, Linux ]
 experience:
   - title: Software Engineer
-    tags:
-      - Software
-      - Testing
-      - Automation
-      - JavaScript
-      - Python
+    tags: [ Software, Testing, Automation, JavaScript, Python ]
     company: Hewlett Packard Enterprise
     location: Andover MA
     start:
@@ -42,34 +37,40 @@ experience:
       year: 2022
     end:
       present: true
-    skills:
-      - Javascript
-      - Python
-      - Cypress
-      - TestRail
+    skills: [ JavaScript, Python, Cypress, TestRail ]
     detail:
       - Developed system for automated browser end-to-end testing of a hybrid-cloud application
       - Worked with JavaScript and Cypress
       - Designed architecture of testing system and planned development
       - Handled QA testing of hybrid-cloud application
-
-  - title: Software Engineer
-    tags:
-      - Software
-      - Security Clearence
-      - Radar
+  - title: Software Developer
+    tags: [ Software, Security Clearence, Radar ]
     company: Raytheon Missiles and Defense
+    location: Woburn MA
     start:
       month: 11
       year: 2020
     end:
       month: 6
       year: 2022
-    skills:
-      - MATLAB
-      - C++
+    skills: [ MATLAB, C++, Docker ]
     detail:
       - Developed build pipelines for containerized applications which are orchestrated on a Kubernetes cluster
       - Worked in a Scrum Team, coordinated with Jira and Confluence
       - Worked with Jenkins, Kubernetes, OpenShift, Artifactory
       - Developed and demoed a plugin for SIMDIS for potential use within projects
+  - title: Technical Support Intern
+    tags: [ IT ]
+    company: Drexel IT
+    location: Philadelphia PA
+    start:
+      month: 3
+      year: 2019
+    end:
+      month: 9
+      year: 2019
+    skills: [ Active Directory, Windows ]
+    detail:
+      - Helped users with computer software accounts issues both by email and over the phone.
+      - Worked with the RemedyForce ticketing system, BeyondTrust Remote Support, Active Directory, Hybrid Exchange, and Office365.
+      - Communicated with other team members to resolve issues.
