@@ -1,136 +1,33 @@
-from fpdf import FPDF
+import argparse
+from .template.fpdf import FPDFResumeTemplate
+import os.path
+import yaml
 
 
-class FPDFResumeTemplate:
+def run_program():
     """
-    Build resume using FPDF
+    Run program
     """
-    font = 'Helvetica'
-    bullet = '-'
-    MONTHS = [
-        'January', 'February', 'March',
-        'April', 'May', 'June',
-        'July', 'August', 'September',
-        'October', 'November', 'December'
-    ]
+    # Argument parser
+    parser = argparse.ArgumentParser(prog='py -m resume_builder',
+                                    description='Generate a resume. Filter experience based on input tags')
+    parser.add_argument('input',            type=str, help='Input YAML file')
+    parser.add_argument('--tags',           '-t', metavar='TAG', nargs='+', type=str, required=False, help='Tags to filter for')
+    parser.add_argument('--output',         '-o', type=str, required=False, help='Output file name')
+    parser.add_argument('--max-experience', '-e', type=int, required=False, default=7, help='Maximum experience')
+    parser.add_argument('--max-skills',     '-s', type=int, required=False, default=7, help='Maximum skills shown in skill section')
+    parser.add_argument('--debug',          '-d', action='store_true', help='Print debug logging')
 
-    def __init__(self, display_projects=False):
-        """
-        Initialize resume template
-        """
-        self.display_projects = display_projects
+    # Arguments
+    args = parser.parse_args()
+    input_path = args.input
+    output = args.output or os.path.basename(input_path).replace('.yaml', '.pdf')
 
-    def title(self, resume):
-        """
-        Build the PDF title
-        """
-        # Name
-        self.pdf.set_font(family=self.font, style='B', size=32)
-        self.pdf.cell(txt=resume['name'], ln=1, h=15)
+    # Load data
+    with open(input_path, 'r') as f:
+        resume = yaml.safe_load(f)
 
-        # Emails
-        self.pdf.set_font(family=self.font, size=11)
-        for contact in resume['contact'].values():
-            self.pdf.cell(txt=contact, ln=1, h=5)
-
-    def education(self, resume):
-        """
-        Build education
-        """
-        self._heading('Education')
-        for level in resume['education']:
-            self._line(level['degree'])
-            self._line(level['school']['title'])
-            self._line(f"Completed {level['completed']['month']} {level['completed']['year']}")
-            self._line(f"GPA {level['GPA']}")
-
-    def skills(self, resume):
-        """
-        Build skills section
-        """
-        self._heading('Skills')
-        self.pdf.set_font(family=self.font, size=11)
-        with self.pdf.table(first_row_as_headings=False,
-                            line_height=5, 
-                            gutter_height=2,
-                            text_align='LEFT',
-                            borders_layout='NONE') as table:
-            titles = table.row()
-            for group in resume['skills']:
-                self.pdf.set_font(style='B')
-                titles.cell(group['group'], v_align='T')
-            self.pdf.set_font()
-            skills = table.row()
-            for group in resume['skills']:
-                skills.cell('\n'.join(f'{self.bullet} {skill}' for skill in group['skills']), v_align='T')
-
-    def projects(self, resume):
-        """
-        Build projects section
-        """
-        self._heading('Projects')
-        for project in resume['projects']:
-            self._subheading(project['title'])
-            self._line(' '.join(project['skills']), style='I')
-            self._spacer()
-            self._bulletlist(project['details'])
-
-    def experience(self, resume):
-        """
-        Build experience section
-        """
-        self._heading('Experience')
-        for job in resume['experience']:
-            self._subheading(job['title'])
-            self._line(job['company'])
-            date = lambda d: 'Present' if d.get('present', False) else f"{self.MONTHS[d['month'] - 1]} {d['year']}"
-            self._line(f"{date(job['start'])} - {date(job['end'])}", style='I')
-            self._line(' '.join(job['skills']), style='I')
-            self._spacer()
-            self._bulletlist(job['detail'])
-
-    def _heading(self, txt):
-        """
-        Write a heading
-        """
-        self.pdf.set_font(family=self.font, style='B', size=18)
-        self.pdf.cell(txt=txt, ln=1, h=14)
-
-    def _subheading(self, txt):
-        """
-        Write a subheading
-        """
-        self.pdf.set_font(family=self.font, style='B', size=14)
-        self.pdf.cell(txt=txt, ln=1, h=10)
-
-    def _line(self, txt, style=''):
-        """
-        Write a line
-        """
-        self.pdf.set_font(family=self.font, style=style, size=11)
-        self.pdf.cell(txt=txt, ln=1)
-
-    def _bulletlist(self, items):
-        """
-        Write out a flat bulleted list
-        """
-        for item in items:
-            self.pdf.set_font(family=self.font, size=11)
-            self.pdf.cell(txt=f'{self.bullet} {item}', ln=1)
-
-    def _spacer(self):
-        """
-        Print a spacer
-        """
-        self.pdf.cell(h=2, w=10, ln=1)
-
-    def compile(self, resume):
-        self.pdf = FPDF()
-        self.pdf.add_page()
-        self.title(resume)
-        self.education(resume)
-        self.skills(resume)
-        if self.display_projects and 'projects' in resume:
-            self.projects(resume)
-        self.experience(resume)
-        return self.pdf
+    # Build resume
+    template = FPDFResumeTemplate()
+    pdf = template.compile(resume)
+    pdf.output(output)

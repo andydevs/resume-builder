@@ -15,7 +15,7 @@ education:
     completed:
       month: June
       year: 2020
-    GPA: '3.00'
+    GPA: 3.00
 skills:
   - group: Programming
     skills: [ Python, JavaScript, C++, HTML/CSS ]
